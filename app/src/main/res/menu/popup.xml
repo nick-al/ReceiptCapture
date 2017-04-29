@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/one"
+        android:title="Create Category"/>
+
+    <item
+        android:id="@+id/two"
+        android:title="Delete"/>
+
+    <item
+        android:id="@+id/three"
+        android:title="Select"/>
+    <item
+        android:id="@+id/four"
+        android:title="Share"/>
+    <item
+        android:id="@+id/five"
+        android:title="Details"/>
+
+    <item
+        android:id="@+id/six"
+        android:title="Log Out"/>
+</menu>

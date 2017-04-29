@@ -1,0 +1,31 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/one"
+        android:title="Select all"/>
+
+    <item
+        android:id="@+id/two"
+        android:title="Select"/>
+
+    <item
+        android:id="@+id/three"
+        android:title="Delete"/>
+    <item
+        android:id="@+id/four"
+        android:title="Copy"/>
+    <item
+        android:id="@+id/five"
+        android:title="Share"/>
+
+    <item
+        android:id="@+id/six"
+        android:title="Move"/>
+
+    <item
+        android:id="@+id/seven"
+        android:title="Details"/>
+    <item
+        android:id="@+id/eight"
+        android:title="Log Out"/>
+</menu>

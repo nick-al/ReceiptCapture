@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ReceiptCapture</string>
+    <!--<string-array name="items">-->
+    <!--<item>Create Category</item>-->
+    <!--<item>Delete</item>-->
+    <!--<item>Select</item>-->
+    <!--<item>Share</item>-->
+    <!--<item>Details</item>-->
+    <!--<item>Log Out</item>-->
+    <!--</string-array>-->
+</resources>

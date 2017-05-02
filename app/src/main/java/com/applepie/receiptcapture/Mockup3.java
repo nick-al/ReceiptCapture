@@ -74,6 +74,7 @@ public class Mockup3 extends AppCompatActivity {
                         REQUEST_CODE_GALLERY
                 );
             }
+
         });
 
         btnAdd.setOnClickListener(new View.OnClickListener() {

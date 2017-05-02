@@ -4,6 +4,8 @@ package com.applepie.receiptcapture;
  * Created by HPENVY on 13/04/2017.
  */
 
+
+
 public class Photo {
     private int id;
     private String name;

@@ -21,13 +21,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+/**
+ * Seng301 Receipt Capture App
+ *
+ * Code written by Nick, Adriaan, Elijah, Kevin, Rohullah
+ *
+ */
 public class Mockup3 extends AppCompatActivity {
-
-    Button mCapture,mView, mGallery, btnAdd, btnList;
-    final int REQUEST_CODE_GALLERY = 999;
+    //global variables to initialise variables
     ImageView imageView;
-    public static SQLiteHelper sqLiteHelper;
+    Button mCapture, mGallery, btnAdd, btnList;
     EditText edtName;
+    public static SQLiteHelper sqLiteHelper;
+    final int REQUEST_CODE_GALLERY = 999;
+    final int REQUEST_CODE_CAMERA = 1337;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -37,22 +44,16 @@ public class Mockup3 extends AppCompatActivity {
         init();
 
         sqLiteHelper = new SQLiteHelper(this, "PhotoDB.sqlite", null, 1);
-
         sqLiteHelper.queryData("CREATE TABLE IF NOT EXISTS PHOTO (Id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, image BLOB)");
 
         mCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intent=new Intent(Mockup3.this,ReceiptCapture.class);
-                startActivity(intent);
-                finish();*/
-
-                final Button button = (Button) findViewById(R.id.capture);
-                button.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        takePicture();
-                    }
-                });
+                ActivityCompat.requestPermissions(
+                        Mockup3.this,
+                        new String[]{Manifest.permission.CAMERA},
+                        REQUEST_CODE_CAMERA
+                );
             }
         });
 
@@ -61,11 +62,6 @@ public class Mockup3 extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(Mockup3.this, PhotoList.class);
                 startActivity(intent);
-
-                /*Intent intent = new Intent(Mockup3.this, Mockup4.class);
-                startActivity(intent);
-                finish();*/
-
             }
         });
 
@@ -96,9 +92,7 @@ public class Mockup3 extends AppCompatActivity {
                 }
             }
         });
-
-           }
-    // static final int REQ_CAPTURE = 1;
+    }
 
     private void takePicture() {
         Intent captureIntent = new Intent("android.media.action.IMAGE_CAPTURE");
@@ -125,17 +119,26 @@ public class Mockup3 extends AppCompatActivity {
             }
             else{
                 Toast.makeText(getApplication(), "You dont have permission to access file location!", Toast.LENGTH_SHORT).show();
-
+            }
+            return;
+        }else if(requestCode == REQUEST_CODE_CAMERA){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                mCapture.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        takePicture();
+                    }
+                });
+            }
+            else{
+                Toast.makeText(getApplication(), "You dont have permission to access this device's camera!", Toast.LENGTH_SHORT).show();
             }
             return;
         }
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if(requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null){
             Uri uri = data.getData();
 
@@ -148,7 +151,6 @@ public class Mockup3 extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 

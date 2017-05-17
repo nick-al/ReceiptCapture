@@ -1,6 +1,7 @@
 package com.applepie.receiptcapture;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +20,13 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Seng301 Receipt Capture App
@@ -30,7 +37,7 @@ import java.io.InputStream;
 public class Mockup3 extends AppCompatActivity {
     //global variables to initialise variables
     ImageView imageView;
-    Button mCapture, mGallery, btnAdd, btnList;
+    Button mCapture, mGallery, btnAdd, btnList, btnShare;
     EditText edtName;
     public static SQLiteHelper sqLiteHelper;
     final int REQUEST_CODE_GALLERY = 999;
@@ -40,6 +47,7 @@ public class Mockup3 extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mockup3);
+
 
         init();
 
@@ -81,16 +89,21 @@ public class Mockup3 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    sqLiteHelper.insertData(
-                            edtName.getText().toString().trim(),
-                            imageViewToByte(imageView)
-                    );
+                    int id = sqLiteHelper.insertData(edtName.getText().toString().trim());
+                    ImageStorage.saveImage(Mockup3.this, id, ((BitmapDrawable) imageView.getDrawable()).getBitmap());
                     Toast.makeText(getApplicationContext(), "Added successfully", Toast.LENGTH_SHORT).show();
                     edtName.setText("");
                     imageView.setImageResource(R.mipmap.ic_launcher);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareImage(((BitmapDrawable) imageView.getDrawable()).getBitmap());
             }
         });
     }
@@ -162,5 +175,34 @@ public class Mockup3 extends AppCompatActivity {
         mGallery = (Button) findViewById(R.id.gallery);
         mCapture = (Button) findViewById(R.id.capture);
         btnList = (Button) findViewById(R.id.btnList);
+        btnShare = (Button) findViewById(R.id.btnShare);
+    }
+
+    private void shareImage(Bitmap bitmap) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/jpeg");
+
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        OutputStream outstream = null;
+        try {
+            outstream = getContentResolver().openOutputStream(uri);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
+            outstream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(outstream != null) {
+                try {
+                    outstream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(intent, "Share"));
     }
 }
